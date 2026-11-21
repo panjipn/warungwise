@@ -219,13 +219,15 @@ export async function extractData(
     mode: modeEnum(mode),
     inCloudParams: { model: "gemini-3.5-flash-lite" },
   });
-  // In Auto mode the SDK only reports inferenceSource when the on-device
-  // model was a real candidate. If Gemini Nano is not fully downloaded on
-  // this device, the request can only have been served by the cloud.
-  let autoFallback: InferenceSource | undefined;
+    // In Auto mode, if the SDK response does not carry inferenceSource, the
+  // serving path is still determined by the SDK's own dispatch: for
+  // PREFER_ON_DEVICE with a plain-text request, a successful call went
+  // on-device iff Gemini Nano was fully available (an on-device failure
+  // would throw, not silently fall back). So we infer from device status.
+  let autoInference: InferenceSource | undefined;
   if (mode === "auto") {
     const status = await checkDeviceStatus();
-    if (status !== "available") autoFallback = "IN_CLOUD";
+    autoInference = status === "available" ? "ON_DEVICE" : "IN_CLOUD";
   }
   try {
     const { text: raw, source, latencyMs } = await runModel(
@@ -235,7 +237,7 @@ export async function extractData(
         ? "ON_DEVICE"
         : mode === "cloud"
           ? "IN_CLOUD"
-          : autoFallback,
+          : autoInference,
     );
     return {
       data: parseExtraction(raw),
