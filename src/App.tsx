@@ -296,9 +296,9 @@ export default function App() {
 
       <footer>
         <p>
-          WarungWise — dibangun untuk #BuildHybridAI 2026 dengan Firebase AI
-          Logic (Gemini Nano on-device + Gemini cloud). Data pada mode
-          on-device tidak pernah meninggalkan perangkatmu.
+                    WarungWise v1.1 — dibangun untuk #BuildHybridAI 2026 dengan
+          Firebase AI Logic (Gemini Nano on-device + Gemini cloud). Data
+          pada mode on-device tidak pernah meninggalkan perangkatmu.
         </p>
       </footer>
     </div>
