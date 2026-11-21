@@ -137,10 +137,15 @@ async function runModel(
   // construction, so the caller passes it in.
   const rawSource = (result.response as { inferenceSource?: string })
     .inferenceSource;
+  // Careful: the SDK enum's runtime VALUES are lowercase ("on_device" /
+  // "in_cloud") even though its keys are ON_DEVICE / IN_CLOUD — comparing
+  // against the keys silently yields UNKNOWN for every request.
   const source: InferenceSource =
-    rawSource === "ON_DEVICE" || rawSource === "IN_CLOUD"
-      ? rawSource
-      : (forcedSource ?? "UNKNOWN");
+    rawSource === "on_device" || rawSource === "ON_DEVICE"
+      ? "ON_DEVICE"
+      : rawSource === "in_cloud" || rawSource === "IN_CLOUD"
+        ? "IN_CLOUD"
+        : (forcedSource ?? "UNKNOWN");
   return { text: result.response.text(), source, latencyMs };
 }
 
